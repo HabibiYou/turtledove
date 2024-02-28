@@ -8,49 +8,52 @@ We hold regular meetings under the auspices of the WICG to go through the detail
 
 See [the Protected Audience API specification](https://wicg.github.io/turtledove/).
 
-- [Summary](#summary)
-- [Background](#background)
-- [Design Elements](#design-elements)
-  - [1. Browsers Record Interest Groups](#1-browsers-record-interest-groups)
-    - [1.1 Joining Interest Groups](#11-joining-interest-groups)
-    - [1.2 Interest Group Attributes](#12-interest-group-attributes)
-    - [1.3 Permission Delegation](#13-permission-delegation)
-    - [1.4 Buyer Security Considerations](#14-buyer-security-considerations)
-  - [2. Sellers Run On-Device Auctions](#2-sellers-run-on-device-auctions)
-    - [2.1 Initiating an On-Device Auction](#21-initiating-an-on-device-auction)
-    - [2.2 Auction Participants](#22-auction-participants)
-    - [2.3 Scoring Bids](#23-scoring-bids)
-    - [2.4 Scoring Bids in Component Auctions](#24-scoring-bids-in-component-auctions)
-    - [2.5 Additional Trusted Signals (directFromSellerSignals)](#25-additional-trusted-signals-directfromsellersignals)
-      - [2.5.1 Using Subresource Bundles](#251-using-subresource-bundles)
+- [Protected Audience API (formerly known as FLEDGE)](#protected-audience-api-formerly-known-as-fledge)
+  - [Summary](#summary)
+  - [Background](#background)
+  - [Design Elements](#design-elements)
+    - [1. Browsers Record Interest Groups](#1-browsers-record-interest-groups)
+      - [1.1 Joining Interest Groups](#11-joining-interest-groups)
+      - [1.2 Interest Group Attributes](#12-interest-group-attributes)
+      - [1.3 Permission Delegation](#13-permission-delegation)
+      - [1.4 Buyer Security Considerations](#14-buyer-security-considerations)
+    - [2. Sellers Run On-Device Auctions](#2-sellers-run-on-device-auctions)
+      - [2.1 Initiating an On-Device Auction](#21-initiating-an-on-device-auction)
+        - [2.1.1 Providing Signals Asynchronously](#211-providing-signals-asynchronously)
+      - [2.2 Auction Participants](#22-auction-participants)
+      - [2.3 Scoring Bids](#23-scoring-bids)
+      - [2.4 Scoring Bids in Component Auctions](#24-scoring-bids-in-component-auctions)
+      - [2.5 Additional Trusted Signals (directFromSellerSignals)](#25-additional-trusted-signals-directfromsellersignals)
+        - [2.5.1 Using Subresource Bundles](#251-using-subresource-bundles)
+          - [CORS Required](#cors-required)
       - [2.5.2 Using Response Headers](#252-using-response-headers)
-  - [3. Buyers Provide Ads and Bidding Functions (BYOS for now)](#3-buyers-provide-ads-and-bidding-functions-byos-for-now)
-    - [3.1 Fetching Real-Time Data from a Trusted Server](#31-fetching-real-time-data-from-a-trusted-server)
-    - [3.2 On-Device Bidding](#32-on-device-bidding)
-    - [3.3 Metadata with the Ad Bid](#33-metadata-with-the-ad-bid)
-    - [3.4 Ads Composed of Multiple Pieces](#34-ads-composed-of-multiple-pieces)
-    - [3.5 Filtering and Prioritizing Interest Groups](#35-filtering-and-prioritizing-interest-groups)
+    - [3. Buyers Provide Ads and Bidding Functions (BYOS for now)](#3-buyers-provide-ads-and-bidding-functions-byos-for-now)
+      - [3.1 Fetching Real-Time Data from a Trusted Server](#31-fetching-real-time-data-from-a-trusted-server)
+      - [3.2 On-Device Bidding](#32-on-device-bidding)
+      - [3.3 Metadata with the Ad Bid](#33-metadata-with-the-ad-bid)
+      - [3.4 Ads Composed of Multiple Pieces](#34-ads-composed-of-multiple-pieces)
+      - [3.5 Filtering and Prioritizing Interest Groups](#35-filtering-and-prioritizing-interest-groups)
     - [3.6 Currency Checking](#36-currency-checking)
-  - [4. Browsers Render the Winning Ad](#4-browsers-render-the-winning-ad)
-  - [5. Event-Level Reporting (for now)](#5-event-level-reporting-for-now)
-    - [5.1 Seller Reporting on Render](#51-seller-reporting-on-render)
-    - [5.2 Buyer Reporting on Render and Ad Events](#52-buyer-reporting-on-render-and-ad-events)
-      - [5.2.1 Noised and Bucketed Signals](#521-noised-and-bucketed-signals)
-    - [5.3 Currencies in Reporting](#53-currencies-in-reporting)
-    - [5.4 Losing Bidder Reporting](#54-losing-bidder-reporting)
-  - [6. Additional Bids](#6-additional-bids)
-    - [6.1 Auction Nonce](#61-auction-nonce)
-    - [6.2 Negative Targeting](#62-negative-targeting)
-      - [6.2.1 Negative Interest Groups](#621-negative-interest-groups)
-      - [6.2.2 How Additional Bids Specify their Negative Interest Groups](#622-how-additional-bids-specify-their-negative-interest-groups)
-      - [6.2.3 Additional Bid Keys](#623-additional-bid-keys)
-    - [6.3 HTTP Response Headers](#63-http-response-headers)
-    - [6.4 Reporting Additional Bid Wins](#64-reporting-additional-bid-wins)
-  - [7. Debugging Extensions](#7-debugging-extensions)
-    - [7.1 forDebuggingOnly (fDO) APIs](#71-fdo-apis)
-      - [7.1.1 Post Auction Signals](#711-post-auction-signals)
+    - [4. Browsers Render the Winning Ad](#4-browsers-render-the-winning-ad)
+    - [5. Event-Level Reporting (for now)](#5-event-level-reporting-for-now)
+      - [5.1 Seller Reporting on Render](#51-seller-reporting-on-render)
+      - [5.2 Buyer Reporting on Render and Ad Events](#52-buyer-reporting-on-render-and-ad-events)
+        - [5.2.1 Noised and Bucketed Signals](#521-noised-and-bucketed-signals)
+      - [5.3 Currencies in Reporting](#53-currencies-in-reporting)
+      - [5.4 Losing Bidder Reporting](#54-losing-bidder-reporting)
+    - [6. Additional Bids](#6-additional-bids)
+      - [6.1 Auction Nonce](#61-auction-nonce)
+      - [6.2 Negative Targeting](#62-negative-targeting)
+        - [6.2.1 Negative Interest Groups](#621-negative-interest-groups)
+        - [6.2.2 How Additional Bids Specify their Negative Interest Groups](#622-how-additional-bids-specify-their-negative-interest-groups)
+        - [6.2.3 Additional Bid Keys](#623-additional-bid-keys)
+      - [6.3 HTTP Response Headers](#63-http-response-headers)
+      - [6.4 Reporting Additional Bid Wins](#64-reporting-additional-bid-wins)
+    - [7. Debugging Extensions](#7-debugging-extensions)
+      - [7.1 forDebuggingOnly (fDO) APIs](#71-fordebuggingonly-fdo-apis)
+        - [7.1.1 Post Auction Signals](#711-post-auction-signals)
       - [7.1.2 Downsampling](#712-downsampling)
-    - [7.2 deprecatedReplaceInURN()](#72-navigatordeprecatedreplaceinurn)
+      - [7.2 navigator.deprecatedReplaceInURN()](#72-navigatordeprecatedreplaceinurn)
 
 
 ## Summary
@@ -356,6 +359,8 @@ const myAuctionConfig = {
                          'https://example.fr': 'EUR',
                          '*': 'USD'},
   'sellerCurrency:' : 'CAD',
+  'deprecatedRenderURLReplacements':{{'${SELLER1}':'ssp1'},
+                                    {'%%SELLER2%%':'ssp2'}},
   'componentAuctions': [
     {'seller': 'https://www.some-other-ssp.com',
       'decisionLogicURL': ...,
@@ -402,12 +407,14 @@ Optionally, `perBuyerPrioritySignals` is an object mapping string keys to Javasc
 
 Optionally, `perBuyerCurrencies` and `sellerCurrency` are used for [currency-checking](#36-currency-checking). `sellerCurrency` also affects how [currencies behave in reporting](#53-currencies-in-reporting).
 
+Optionally, `deprecatedRenderURLReplacements` can be specified to allow replacing macros within the renderURL. This works similar to [navigator.deprecatedReplaceInURN()](#72-navigatordeprecatedreplaceinurn), but within the auction config. This allows for replacements within top level seller auction configs where there are not any component seller auction configs, or component auction configs.
+
 Optionally, `resolveToConfig` is a boolean directing the promise returned from `runAdAuction()` to resolve to a `FencedFrameConfig` if true, for use in a `<fencedframe>`, or if false to an opaque `urn:uuid` URL, for use in an `<iframe>`.  If `resolveToConfig` is not set, it defaults to false.
 If the `window.FencedFrameConfig` interface is not exposed (because e.g., the script is running in an older version of Chrome that does not yet implement `FencedFrameConfig`, then the auction will _always_ yield a URN.
 Therefore, when requesting a `FencedFrameConfig` for use in a fenced frame element, you have two options:
 
 1. Only pass `resolveToConfig: true` in if you detect that `window.FencedFrameConfig != undefined`, or
-1. Unconditionally pass in `resolveToConfig: true` and check whether the auction result is a config or a URN.
+2. Unconditionally pass in `resolveToConfig: true` and check whether the auction result is a config or a URN.
 
 All fields that accept arbitrary metadata objects (`auctionSignals`, `sellerSignals`, and keys of `perBuyerSignals`) must be JSON-serializable.
 All fields that specify URLs for loading scripts or JSON (`decisionLogicURL` and
